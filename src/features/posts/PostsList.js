@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimesAgo'
 import { ReactionButtons } from './ReactionButtons'
+import { selectAllPosts } from './postsSlice'
 
 export function PostsList() {
-  const posts = useSelector((state) => state.posts)
+  const posts = useSelector(selectAllPosts)
 
   const orderedPosts = posts
     .slice()
