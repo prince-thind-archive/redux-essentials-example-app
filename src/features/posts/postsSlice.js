@@ -1,19 +1,16 @@
-import { createSlice,  createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
-
 
 export const addNewPost = createAsyncThunk(
   'posts/addNewPost',
   // The payload creator receives the partial `{title, content, user}` object
-  async initialPost => {
+  async (initialPost) => {
     // We send the initial data to the fake API server
     const response = await client.post('/fakeApi/posts', initialPost)
     // The response includes the complete post object, including unique ID
     return response.data
   }
 )
-
-
 
 const initialState = {
   posts: [],
@@ -56,11 +53,10 @@ const postsSlice = createSlice({
         state.error = action.error.message
       })
 
-      builder.addCase(addNewPost.fulfilled, (state, action) => {
-        // We can directly add the new post object to our posts array
-        state.posts.push(action.payload)
-      })
-  
+    builder.addCase(addNewPost.fulfilled, (state, action) => {
+      // We can directly add the new post object to our posts array
+      state.posts.push(action.payload)
+    })
   },
 })
 
@@ -75,5 +71,10 @@ export const selectAllPosts = (state) => state.posts.posts
 
 export const selectPostById = (state, postId) =>
   state.posts.posts.find((post) => post.id === postId)
+
+export const selectPostsByUser = createSelector(
+  [selectAllPosts, (state, userId) => userId],
+  (posts, userId) => posts.filter((post) => post.user === userId)
+)
 
 export default postsSlice.reducer
